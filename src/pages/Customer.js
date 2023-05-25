@@ -1,8 +1,10 @@
-import { useParams, Link, useNavigate} from "react-router-dom"
-import { useEffect, useState } from "react"
-import { baseUrl } from "../Shared"
 
+import { useEffect, useState, useContext } from "react"
+import { baseUrl } from "../Shared"
+import { useParams, Link, useNavigate, useLocation} from "react-router-dom"
+import { LoginContext } from "../App"
 export default function Customer() {
+  const [loggedIn, setLoggedIn] = useContext(LoginContext)
   const {id} = useParams()
   const navigate = useNavigate()
   const [customer, setCustomer] = useState()
@@ -10,6 +12,8 @@ export default function Customer() {
   const [notFound, setNotfound] = useState()
   const [changed, setChanged] = useState(false)
   const [error, setError]= useState()
+  const location = useLocation()
+
  
 
 useEffect(() => {
@@ -28,11 +32,23 @@ useEffect(() => {
 })
 
 useEffect(() => {
-  const url = baseUrl + '/api/customers/' + id
-  fetch(url)
+  const url = baseUrl + 'api/customers/' + id
+  fetch(url, { 
+    headers: {
+    'Content-Type': 'application/json',
+    Authorization: 'Bearer ' + localStorage.getItem('access'),
+},
+})
   .then((response) => {
     if(response.status === 404){
         setNotfound(true)
+    }else if (response.status === 401){
+      setLoggedIn(false)
+      navigate('/login', {
+        state: {
+          previousUrl: location.pathname,
+      }
+      })
     }
      
     if(!response.ok) throw new Error('Something went wrong, try again later')
@@ -56,10 +72,19 @@ useEffect(() => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(tempCustomer)
-    })
+        Authorization: 'Bearer ' + localStorage.getItem('access'),
+    },
+        body: JSON.stringify(tempCustomer)
+  })
     .then((response) => {
+      if (response.status === 401){
+        setLoggedIn(false)
+        navigate('/login', {
+          state: {
+            previousUrl: location.pathname,
+        }
+        })
+      }
       if(!response.ok) throw new Error('Something went wrong')
       return response.json()
     })
@@ -137,7 +162,7 @@ useEffect(() => {
           <div className="mb-2"> 
               <button
                  className = "bg-slate-600 hover:bg-slate-800 text-white font-bold py-2 px-4 mr-2 rounded"
-                 onClick={(e) => {
+                 onClick={() => {
                   setTempCustomer({...customer})
                   setChanged(false)
                  }}
@@ -157,10 +182,20 @@ useEffect(() => {
            className = "bg-slate-600 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded"
            onClick={() => {
             const url = baseUrl + 'api/customers/' + id
-            fetch(url, {method: 'DELETE', headers:{
-              'Content-Type': 'application/json'
+            fetch(url, {method: 'DELETE', 
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + localStorage.getItem('access'),
             }})
             .then((response) => {
+              if (response.status === 401){
+                setLoggedIn(false)
+                navigate('/login', {
+                  state: {
+                    previousUrl: location.pathname,
+                }
+                })
+              }
               if(response.ok){
                 throw new Error('Something went wrong')
               }
@@ -183,7 +218,7 @@ useEffect(() => {
            <Link  to="/customers">
             <button
               className = "no-underline bg-purple-600 hover:bg-purple-800 text-white font-bold py-2 px-4 rounded">
-              Go Back
+               Go Back
               </button>
              </Link>
         </div>

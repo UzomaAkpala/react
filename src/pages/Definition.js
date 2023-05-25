@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import NotFound from "./NotFound";
 import DefinitionSearch from "../components/DefinitionSearch";
 
@@ -10,6 +10,7 @@ export default function Defintion() {
    let {search} = useParams()
    const [notFound, setNotFound] = useState(false)
    const navigate = useNavigate()
+   const location = useLocation()
  
     useEffect(() => {
         const url = 'https://api.dictionaryapi.dev/api/v2/entries/en/' + search
@@ -19,7 +20,11 @@ export default function Defintion() {
             if (response.status === 404){
                 setNotFound(true)
             }else if(response.status === 401) {
-                navigate('/login')
+                navigate('/login', {
+                    state: {
+                        previousUrl: location.pathname,
+                    }
+                })
             }else if(response.status === 500) {
                 setError(true)
             }
