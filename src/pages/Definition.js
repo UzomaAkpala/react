@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import NotFound from "./NotFound";
 import DefinitionSearch from "../components/DefinitionSearch";
 
+
 export default function Defintion() {
     
    const [word, setWord] = useState()
@@ -11,8 +12,8 @@ export default function Defintion() {
    const [notFound, setNotFound] = useState(false)
    const navigate = useNavigate()
    const location = useLocation()
- 
-    useEffect(() => {
+    
+     useEffect(() => {
         const url = 'https://api.dictionaryapi.dev/api/v2/entries/en/' + search
         fetch(url)
         .then((response) => {
@@ -43,7 +44,7 @@ export default function Defintion() {
          .catch((e) => {
             console.log(e.message)
          })
-    }, [])
+    }, []) 
 
     if (notFound === true){
         return(
@@ -62,13 +63,14 @@ export default function Defintion() {
         </>
         )
     }
-
+   
     return(
       
         <div>
         
              {word 
-             ? <>
+             ? 
+             <>
              <h2>Here is a definition:</h2>
              {word}
              <p>Search Again:</p>
@@ -78,4 +80,4 @@ export default function Defintion() {
             }
         </div>
     )
-}
+} 

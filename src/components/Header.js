@@ -54,12 +54,25 @@ export default function Header(props) {
                           </NavLink>
                         ))}
 
+                       { loggedIn ? (
                           <NavLink
-                            to ={loggedIn ? '/logout' : '/login'}
+                            to ={'/login'}
+                            onClick={() => {
+                              setLoggedIn(false)
+                              localStorage.clear()
+                            }}
                             className = "px-3 py-2 rounded-md text-sm font-medium no-underline text-gray-300 hover:bg-gray-700 hover:text-white "  
                           >
-                         {loggedIn ? 'Logout' : 'Login'}
+                           Logout
                           </NavLink>
+                        ) : (
+                          <NavLink
+                            to ={'/login'}
+                            className = "px-3 py-2 rounded-md text-sm font-medium no-underline text-gray-300 hover:bg-gray-700 hover:text-white "  
+                          >
+                          Login
+                          </NavLink>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -92,12 +105,25 @@ export default function Header(props) {
                   
                   ))}
                        
-                       <NavLink
-                            to ={loggedIn ? '/logout' : '/login'}
-                            className = "block rounded-md px-3 py-2 text-base font-medium no-underline  text-gray-300 hover:bg-gray-700 hover:text-white"  
+                       { loggedIn ? (
+                          <NavLink
+                            to ={'/login'}
+                            onClick={() => {
+                              setLoggedIn(false)
+                              localStorage.clear()
+                            }}
+                            className = "block rounded-md px-3 py-2 text-base font-medium no-underline  text-gray-300 hover:bg-gray-700 hover:text-white "  
                           >
-                         {loggedIn ? 'Logout' : 'Login'}
+                           Logout
                           </NavLink>
+                        ) : (
+                          <NavLink
+                            to ={'/login'}
+                            className = "block rounded-md px-3 py-2 text-base font-medium no-underline  text-gray-300 hover:bg-gray-700 hover:text-white "  
+                          >
+                          Login
+                          </NavLink>
+                        )}
 
                 </div>
               </Disclosure.Panel>
